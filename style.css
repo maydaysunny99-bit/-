@@ -36,3 +36,64 @@ button:hover {
 #result {
   margin-top: 50px;             /* 與上方距離 */
 }
+// 使用者選擇後要做的事情
+function choose(winner, loser) {
+
+  // 更新 Elo 分數
+  updateElo(winner, loser);
+
+  // 題目數 +1
+  rounds++;
+
+  // 如果已經達到題目上限
+  if (rounds >= MAX_ROUNDS) {
+    showResult();   // 顯示結果
+  } else {
+    nextBattle();  // 繼續下一題
+  }
+}
+
+/* ===============================
+   顯示最終排名
+   =============================== */
+
+function showResult() {
+
+  // 隱藏二選一畫面
+  document.getElementById("battle").hidden = true;
+
+  // 顯示結果畫面
+  document.getElementById("result").hidden = false;
+
+  // 依照分數由高到低排序
+  const sorted = [...characters].sort(
+    (a, b) => b.rating - a.rating
+  );
+
+  // 取得排名清單容器
+  const list = document.getElementById("ranking");
+
+  // 清空舊內容（保險用）
+  list.innerHTML = "";
+
+  // 逐一加入排名項目
+  sorted.forEach(char => {
+
+    // 建立一個 li
+    const li = document.createElement("li");
+
+    // 顯示角色名稱與分數
+    li.textContent =
+      `${char.name}（分數：${Math.round(char.rating)}）`;
+
+    // 加入清單
+    list.appendChild(li);
+  });
+}
+
+/* ===============================
+   啟動第一題
+   =============================== */
+
+// 頁面載入後立即出第一題
+nextBattle();
