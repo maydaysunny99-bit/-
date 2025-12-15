@@ -1,0 +1,38 @@
+/* 設定整個頁面的基本樣式 */
+body {
+  font-family: sans-serif;       /* 使用無襯線字體 */
+  text-align: center;            /* 文字置中 */
+  background-color: #f5f5f5;     /* 淺灰背景 */
+  margin: 0;                     /* 移除預設邊距 */
+  padding: 40px;                 /* 四周留白 */
+}
+
+/* 二選一區塊 */
+#battle {
+  display: flex;                /* 使用彈性排版 */
+  justify-content: center;      /* 水平置中 */
+  align-items: center;          /* 垂直置中 */
+  gap: 20px;                    /* 元素之間距離 */
+  margin-top: 40px;             /* 與上方距離 */
+}
+
+/* 所有按鈕的樣式 */
+button {
+  padding: 20px 30px;           /* 按鈕內距 */
+  font-size: 18px;              /* 文字大小 */
+  cursor: pointer;              /* 滑鼠變手指 */
+  border-radius: 8px;           /* 圓角 */
+  border: none;                 /* 移除邊框 */
+  background-color: white;      /* 白色背景 */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* 陰影 */
+}
+
+/* 滑鼠移上去的效果 */
+button:hover {
+  background-color: #eaeaea;    /* 背景變深 */
+}
+
+/* 排名結果區 */
+#result {
+  margin-top: 50px;             /* 與上方距離 */
+}
