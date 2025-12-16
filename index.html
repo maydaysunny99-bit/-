@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>角色二選一排名產生器</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -10,34 +11,34 @@
 
   <h1>請選出你比較喜歡的角色</h1>
 
-  <!-- 二選一對戰區塊 -->
+  <!-- 對戰主區 -->
   <div id="battle">
 
-    <!-- 題號顯示（由 JS 更新） -->
+    <!-- 題號（第 n 題） -->
     <div id="progress"></div>
 
-    <!-- 選項容器（關鍵） -->
+    <!-- 選項區（手機排版關鍵容器） -->
     <div id="choices">
 
-      <!-- 左邊角色 -->
+      <!-- 左選項 -->
       <button id="left"></button>
 
-      <!-- 中間 VS -->
+      <!-- VS -->
       <div class="vs">VS</div>
 
-      <!-- 右邊角色 -->
+      <!-- 右選項 -->
       <button id="right"></button>
 
     </div>
   </div>
 
-  <!-- 結果區塊（一開始隱藏） -->
+  <!-- 結果畫面 -->
   <div id="result" hidden>
     <h2>你的最愛排名</h2>
     <ol id="ranking"></ol>
   </div>
 
-  <!-- JavaScript -->
+  <!-- JS -->
   <script src="script.js"></script>
 
 </body>
