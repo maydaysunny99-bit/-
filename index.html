@@ -4,41 +4,115 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>角色二選一排名產生器</title>
-  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ===== reset（極簡） ===== */
+    body, h1, div, button {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(
+        135deg,
+        #2f5fa7 0%,
+        #4f82c9 45%,
+        #f5d97a 100%
+      );
+      font-family: -apple-system, BlinkMacSystemFont,
+                   "PingFang TC", "Noto Sans TC", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #10243f;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    /* ===== 對戰區 ===== */
+    #battle {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #progress {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      opacity: 0.85;
+    }
+
+    #choices {
+      display: block;
+      width: 100%;
+    }
+
+    /* ⚠️ 關鍵：不用 flex，避免 iOS button 吃字 */
+    button {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+      padding: 20px 12px;
+
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.4;
+
+      color: #1f2f4a;
+      background-color: #fff4b8;
+
+      border: none;
+      border-radius: 14px;
+
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    }
+
+    button:active {
+      transform: translateY(2px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+
+    .vs {
+      margin: 6px 0;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    /* ===== 結果 ===== */
+    #result {
+      max-width: 420px;
+      padding: 20px;
+    }
+  </style>
 </head>
 
 <body>
 
   <h1>請選出你比較喜歡的角色</h1>
 
-  <!-- 對戰主區 -->
   <div id="battle">
-
-    <!-- 題號（第 n 題） -->
     <div id="progress"></div>
 
-    <!-- 選項區（手機排版關鍵容器） -->
     <div id="choices">
-
-      <!-- 左選項 -->
-      <button id="left"></button>
-
-      <!-- VS -->
+      <button id="left">LEFT</button>
       <div class="vs">VS</div>
-
-      <!-- 右選項 -->
-      <button id="right"></button>
-
+      <button id="right">RIGHT</button>
     </div>
   </div>
 
-  <!-- 結果畫面 -->
   <div id="result" hidden>
     <h2>你的最愛排名</h2>
     <ol id="ranking"></ol>
   </div>
 
-  <!-- JS -->
+  <!-- 不動你的 JS -->
   <script src="script.js"></script>
 
 </body>
