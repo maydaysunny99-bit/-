@@ -1,57 +1,40 @@
 <!DOCTYPE html>
-<!-- 宣告這是一個 HTML5 文件 -->
-
 <html lang="zh-Hant">
-<!-- 網頁語言：繁體中文 -->
-
 <head>
   <meta charset="UTF-8">
-  <!-- 設定編碼，避免中文亂碼 -->
-
   <title>角色二選一排名產生器</title>
-  <!-- 網頁標題（瀏覽器分頁名稱） -->
-
   <link rel="stylesheet" href="style.css">
-  <!-- 載入 CSS 樣式 -->
 </head>
 
 <body>
-  <!-- 網頁內容開始 -->
 
   <h1>請選出你比較喜歡的角色</h1>
-  <!-- 頁面標題 -->
 
-<div id="battle">
-  <div id="progress"></div>
-
-  <button id="left"></button>
-  <button id="right"></button>
-</div>
-
+  <!-- 二選一對戰區塊 -->
   <div id="battle">
-    <!-- 二選一對戰區塊 -->
 
+    <!-- 題號顯示（由 JS 更新） -->
+    <div id="progress"></div>
+
+    <!-- 左邊角色 -->
     <button id="left"></button>
-    <!-- 左邊角色按鈕 -->
 
-    <span>VS</span>
-    <!-- 中間顯示 VS -->
+    <!-- 中間 VS -->
+    <div class="vs">VS</div>
 
+    <!-- 右邊角色 -->
     <button id="right"></button>
-    <!-- 右邊角色按鈕 -->
+
   </div>
 
+  <!-- 結果區塊（一開始隱藏） -->
   <div id="result" hidden>
-    <!-- 結果區塊，一開始隱藏 -->
-
     <h2>你的最愛排名</h2>
-    <!-- 結果標題 -->
-
     <ol id="ranking"></ol>
-    <!-- 排名清單（由 JS 動態塞入） -->
   </div>
 
+  <!-- JavaScript -->
   <script src="script.js"></script>
-  <!-- 載入 JavaScript -->
+
 </body>
 </html>
