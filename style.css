@@ -120,3 +120,8 @@ button:active {
   font-size: 1rem;
 }
 
+button {
+  font-size: 1.1rem !important;
+  color: #1a1a1a !important;
+  white-space: normal;
+}
