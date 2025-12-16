@@ -261,4 +261,4 @@ function showResult() {
 nextBattle();
 
 document.getElementById("progress").textContent =
-  `第 ${rounds + 1} 題 / 共 ${MAX_ROUNDS} 題`;
+  `第 ${rounds + 1} 題`;
