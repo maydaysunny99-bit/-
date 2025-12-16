@@ -128,8 +128,6 @@ const characters = [
   { name: "安宅切", rating: 1000 },
 ];
 
-/* 
-
 /* ===============================
    全域狀態
    =============================== */
@@ -137,54 +135,36 @@ const characters = [
 let rounds = 0;
 let currentPair = null;
 let pairingQueue = [];
-let previousRanking = [];
-let stableRounds = 0;
-
-const MAX_STABLE_ROUNDS = 3;
 const playedPairs = new Set();
 
 /* ===============================
    工具
    =============================== */
 
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
 function pairKey(a, b) {
   return [a.name, b.name].sort().join("||");
 }
 
 /* ===============================
-   Elo（含平手）
+   Elo（無平手）
    =============================== */
 
-function updateElo(winner, loser, isDraw = false) {
+function updateElo(winner, loser) {
   const K = 24;
-
-  const expectedWin =
+  const expected =
     1 / (1 + Math.pow(10, (loser.rating - winner.rating) / 400));
 
-  if (isDraw) {
-    winner.rating += K * (0.5 - expectedWin);
-    loser.rating += K * (0.5 - (1 - expectedWin));
-  } else {
-    winner.rating += K * (1 - expectedWin);
-    loser.rating += K * (0 - (1 - expectedWin));
-  }
+  winner.rating += K * (1 - expected);
+  loser.rating += K * (0 - (1 - expected));
 }
 
 /* ===============================
-   瑞士制配對
+   瑞士制配對（穩定簡化版）
    =============================== */
 
 function generatePairings() {
   const sorted = [...characters].sort((a, b) => {
     if (b.wins !== a.wins) return b.wins - a.wins;
-    if (a.losses !== b.losses) return a.losses - b.losses;
     return b.rating - a.rating;
   });
 
@@ -238,55 +218,16 @@ function nextBattle() {
    使用者選擇
    =============================== */
 
-document.getElementById("left").onclick = () =>
-  resolveBattle("left");
-
-document.getElementById("right").onclick = () =>
-  resolveBattle("right");
-
-document.getElementById("draw").onclick = () =>
-  resolveBattle("draw");
-
-function resolveBattle(result) {
+function resolveBattle(side) {
   const { a, b } = currentPair;
+  const winner = side === "left" ? a : b;
+  const loser  = side === "left" ? b : a;
 
-  if (result === "draw") {
-    a.draws++;
-    b.draws++;
-    updateElo(a, b, true);
-  } else {
-    const winner = result === "left" ? a : b;
-    const loser  = result === "left" ? b : a;
-    winner.wins++;
-    loser.losses++;
-    updateElo(winner, loser);
-  }
+  winner.wins++;
+  loser.losses++;
+  updateElo(winner, loser);
 
-  checkStability();
   nextBattle();
-}
-
-/* ===============================
-   排名穩定判定
-   =============================== */
-
-function checkStability() {
-  const ranking = characters
-    .slice()
-    .sort((a, b) => b.rating - a.rating)
-    .map(c => c.name)
-    .join(",");
-
-  if (ranking === previousRanking) {
-    stableRounds++;
-  } else {
-    stableRounds = 0;
-    previousRanking = ranking;
-  }
-
-  if (stableRounds >= MAX_STABLE_ROUNDS) {
-    showResult();
-  }
 }
 
 /* ===============================
@@ -303,15 +244,23 @@ function showResult() {
 
   sorted.forEach(c => {
     const li = document.createElement("li");
-    li.textContent =
-      `${c.name}（勝:${c.wins} 敗:${c.losses} 平:${c.draws}）`;
+    li.textContent = `${c.name}（勝:${c.wins} 敗:${c.losses}）`;
     list.appendChild(li);
   });
 }
 
 /* ===============================
-   啟動
+   🔑 啟動（等 DOM 準備好）
    =============================== */
 
-generatePairings();
-nextBattle();
+document.addEventListener("DOMContentLoaded", () => {
+
+  document.getElementById("left")
+    .addEventListener("click", () => resolveBattle("left"));
+
+  document.getElementById("right")
+    .addEventListener("click", () => resolveBattle("right"));
+
+  generatePairings();
+  nextBattle();
+});
