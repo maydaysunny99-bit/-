@@ -160,3 +160,66 @@ button:active {
   font-size: 15px;
   border-bottom: 1px solid rgba(74, 111, 165, 0.15);
 }
+/* ===============================
+   手機專用調整（Mobile First）
+   =============================== */
+
+@media (max-width: 480px) {
+
+  body {
+    padding: 24px 14px;
+  }
+
+  h1 {
+    font-size: 20px;
+    line-height: 1.4;
+    margin-bottom: 20px;
+  }
+
+  /* 題號 */
+  #progress {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  /* 主戰鬥區 */
+  #battle {
+    gap: 12px;
+  }
+
+  /* 選項區：仍維持左右，但更緊湊 */
+  #choices {
+    gap: 12px;
+  }
+
+  /* VS */
+  .vs {
+    font-size: 12px;
+  }
+
+  /* 按鈕：手機核心優化 */
+  button {
+    min-width: 0;
+    width: 42vw;              /* 兩顆剛好佔滿螢幕 */
+    padding: 22px 10px;
+    font-size: 17px;
+    line-height: 1.4;
+    border-radius: 18px;
+  }
+
+  /* 防止文字太長爆版 */
+  button {
+    word-break: keep-all;
+    white-space: normal;
+  }
+
+  /* 結果區 */
+  #result {
+    margin-top: 40px;
+  }
+
+  #ranking li {
+    font-size: 14px;
+    padding: 12px 0;
+  }
+}
