@@ -128,115 +128,164 @@ const characters = [
   { name: "安宅切", rating: 1000 },
 ];
 
+/* 
+
 /* ===============================
-   全域變數
+   全域狀態
    =============================== */
 
-let leftChar;
-let rightChar;
 let rounds = 0;
-const MAX_ROUNDS = Math.ceil(characters.length * 2);
+let currentPair = null;
+let pairingQueue = [];
+let previousRanking = [];
+let stableRounds = 0;
 
-const appearCount = new Map();
-let unappeared = [];
-let coveringPhase = true;
-
-characters.forEach(c => appearCount.set(c, 0));
-unappeared = [...characters];
+const MAX_STABLE_ROUNDS = 3;
+const playedPairs = new Set();
 
 /* ===============================
-   工具函式
+   工具
    =============================== */
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
 }
 
-function pickByLeastAppear(exclude = null) {
-  let min = Infinity;
-  let candidates = [];
-  characters.forEach(c => {
-    if (c === exclude) return;
-    const count = appearCount.get(c);
-    if (count < min) {
-      min = count;
-      candidates = [c];
-    } else if (count === min) {
-      candidates.push(c);
-    }
-  });
-  return candidates[Math.floor(Math.random() * candidates.length)];
+function pairKey(a, b) {
+  return [a.name, b.name].sort().join("||");
 }
 
 /* ===============================
-   Elo 分數計算
+   Elo（含平手）
    =============================== */
 
-function updateElo(winner, loser) {
-  const K = 32;
+function updateElo(winner, loser, isDraw = false) {
+  const K = 24;
+
   const expectedWin =
     1 / (1 + Math.pow(10, (loser.rating - winner.rating) / 400));
-  winner.rating += K * (1 - expectedWin);
-  loser.rating += K * (0 - (1 - expectedWin));
+
+  if (isDraw) {
+    winner.rating += K * (0.5 - expectedWin);
+    loser.rating += K * (0.5 - (1 - expectedWin));
+  } else {
+    winner.rating += K * (1 - expectedWin);
+    loser.rating += K * (0 - (1 - expectedWin));
+  }
 }
 
 /* ===============================
-   產生下一題
+   瑞士制配對
+   =============================== */
+
+function generatePairings() {
+  const sorted = [...characters].sort((a, b) => {
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    if (a.losses !== b.losses) return a.losses - b.losses;
+    return b.rating - a.rating;
+  });
+
+  pairingQueue = [];
+  const used = new Set();
+
+  for (let i = 0; i < sorted.length; i++) {
+    if (used.has(sorted[i])) continue;
+
+    for (let j = i + 1; j < sorted.length; j++) {
+      if (used.has(sorted[j])) continue;
+
+      const key = pairKey(sorted[i], sorted[j]);
+      if (!playedPairs.has(key)) {
+        pairingQueue.push([sorted[i], sorted[j]]);
+        used.add(sorted[i]);
+        used.add(sorted[j]);
+        break;
+      }
+    }
+  }
+}
+
+/* ===============================
+   下一題
    =============================== */
 
 function nextBattle() {
-
-  // ⭐ 題號更新一定要在這裡
-  document.getElementById("progress").textContent =
-    `第 ${rounds + 1} 題`;
-
-  if (coveringPhase) {
-    if (unappeared.length === characters.length) {
-      shuffle(unappeared);
-    }
-    leftChar = unappeared.pop();
-    if (unappeared.length > 0) {
-      rightChar = unappeared.pop();
-    } else {
-      rightChar = pickByLeastAppear(leftChar);
-    }
-    if (unappeared.length === 0) {
-      coveringPhase = false;
-    }
-  } else {
-    leftChar = pickByLeastAppear();
-    rightChar = pickByLeastAppear(leftChar);
+  if (pairingQueue.length === 0) {
+    generatePairings();
   }
 
-  appearCount.set(leftChar, appearCount.get(leftChar) + 1);
-  appearCount.set(rightChar, appearCount.get(rightChar) + 1);
+  if (pairingQueue.length === 0) {
+    showResult();
+    return;
+  }
 
-  document.getElementById("left").textContent = leftChar.name;
-  document.getElementById("right").textContent = rightChar.name;
+  rounds++;
+  document.getElementById("progress").textContent =
+    `第 ${rounds} 次比較`;
+
+  const [a, b] = pairingQueue.shift();
+  currentPair = { a, b };
+  playedPairs.add(pairKey(a, b));
+
+  document.getElementById("left").textContent = a.name;
+  document.getElementById("right").textContent = b.name;
 }
 
 /* ===============================
    使用者選擇
    =============================== */
 
-document.getElementById("left").onclick = function () {
-  choose(leftChar, rightChar);
-};
+document.getElementById("left").onclick = () =>
+  resolveBattle("left");
 
-document.getElementById("right").onclick = function () {
-  choose(rightChar, leftChar);
-};
+document.getElementById("right").onclick = () =>
+  resolveBattle("right");
 
-function choose(winner, loser) {
-  updateElo(winner, loser);
-  rounds++;
-  if (rounds >= MAX_ROUNDS) {
-    showResult();
+document.getElementById("draw").onclick = () =>
+  resolveBattle("draw");
+
+function resolveBattle(result) {
+  const { a, b } = currentPair;
+
+  if (result === "draw") {
+    a.draws++;
+    b.draws++;
+    updateElo(a, b, true);
   } else {
-    nextBattle();
+    const winner = result === "left" ? a : b;
+    const loser  = result === "left" ? b : a;
+    winner.wins++;
+    loser.losses++;
+    updateElo(winner, loser);
+  }
+
+  checkStability();
+  nextBattle();
+}
+
+/* ===============================
+   排名穩定判定
+   =============================== */
+
+function checkStability() {
+  const ranking = characters
+    .slice()
+    .sort((a, b) => b.rating - a.rating)
+    .map(c => c.name)
+    .join(",");
+
+  if (ranking === previousRanking) {
+    stableRounds++;
+  } else {
+    stableRounds = 0;
+    previousRanking = ranking;
+  }
+
+  if (stableRounds >= MAX_STABLE_ROUNDS) {
+    showResult();
   }
 }
 
@@ -252,9 +301,10 @@ function showResult() {
   const list = document.getElementById("ranking");
   list.innerHTML = "";
 
-  sorted.forEach(char => {
+  sorted.forEach(c => {
     const li = document.createElement("li");
-    li.textContent = char.name;
+    li.textContent =
+      `${c.name}（勝:${c.wins} 敗:${c.losses} 平:${c.draws}）`;
     list.appendChild(li);
   });
 }
@@ -263,4 +313,5 @@ function showResult() {
    啟動
    =============================== */
 
+generatePairings();
 nextBattle();
