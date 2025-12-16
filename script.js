@@ -259,7 +259,7 @@ function showResult() {
 
     // 顯示角色名稱與分數
     li.textContent =
-      `${char.name}（分數：${Math.round(char.rating)}）`;
+      `${char.name};
 
     // 加入清單
     list.appendChild(li);
