@@ -188,6 +188,11 @@ function updateElo(winner, loser) {
    =============================== */
 
 function nextBattle() {
+
+  // ⭐ 題號更新一定要在這裡
+  document.getElementById("progress").textContent =
+    `第 ${rounds + 1} 題`;
+
   if (coveringPhase) {
     if (unappeared.length === characters.length) {
       shuffle(unappeared);
@@ -249,7 +254,7 @@ function showResult() {
 
   sorted.forEach(char => {
     const li = document.createElement("li");
-    li.textContent = `${char.name}`;
+    li.textContent = char.name;
     list.appendChild(li);
   });
 }
@@ -259,6 +264,3 @@ function showResult() {
    =============================== */
 
 nextBattle();
-
-document.getElementById("progress").textContent =
-  `第 ${rounds + 1} 題`;
