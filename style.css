@@ -1,127 +1,131 @@
-/* ===== 全域設定（手機優先） ===== */
+/* ===============================
+   全域設定（手機優先）
+   =============================== */
+
 * {
   box-sizing: border-box;
 }
 
 html, body {
+  width: 100%;
   height: 100%;
   margin: 0;
 }
 
-/* ===== 背景：藍 × 黃柔和漸層 ===== */
 body {
-  font-family: "Noto Sans TC", "PingFang TC", "Hiragino Sans", sans-serif;
-  background: linear-gradient(
-    135deg,
-    #f6e7b2 0%,
-    #eaf0fb 35%,
-    #dbe6f7 65%,
-    #f6e7b2 100%
-  );
-  color: #1e2a44;
-
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "Noto Sans TC", "PingFang TC", sans-serif;
+  background: linear-gradient(180deg, #1e3a8a 0%, #facc15 120%);
+  color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-
-  padding: 24px;
+  justify-content: flex-start;
+  padding: 16px;
 }
 
-/* ===== 主標題 ===== */
+/* ===============================
+   標題
+   =============================== */
+
 h1 {
   font-size: 1.6rem;
-  margin-bottom: 12px;
-  letter-spacing: 0.05em;
+  margin: 12px 0 20px;
+  text-align: center;
 }
 
-/* ===== 對戰區塊（整個畫面核心） ===== */
+/* ===============================
+   對戰區塊
+   =============================== */
+
 #battle {
   width: 100%;
   max-width: 420px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-
-  margin-top: 12px;
 }
 
-/* ===== 題號 ===== */
+/* 題號（上下排列的「上」） */
 #progress {
-  font-size: 0.95rem;
-  color: #4a5d87;
-  opacity: 0.85;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  opacity: 0.9;
 }
 
-/* ===== VS ===== */
-.vs {
-  font-size: 0.9rem;
-  letter-spacing: 0.15em;
-  color: #6b7fa8;
+/* ===============================
+   三個選項（手機直向）
+   =============================== */
+
+#choices {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-/* ===== 按鈕（主視覺重點） ===== */
+/* ===============================
+   按鈕（重點修復區）
+   =============================== */
+
 button {
   width: 100%;
-  padding: 18px 16px;
+  min-height: 64px;
+  padding: 14px 16px;
 
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.3;
+  text-align: center;
 
   border: none;
-  border-radius: 18px;
+  border-radius: 14px;
 
-  background: linear-gradient(
-    180deg,
-    #fff1a8 0%,
-    #f3d96c 100%
-  );
-  color: #2a2a2a;
+  background-color: #fff7cc; /* 柔和鵝黃 */
+  color: #1e3a8a;
 
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+  /* 🔥 關鍵：避免再被壓成圓圈 */
+  white-space: normal;
+  word-break: break-word;
 }
 
-/* 點擊、滑過反饋 */
-button:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 12px 26px rgba(0, 0, 0, 0.18);
-}
-
+/* 按壓回饋 */
 button:active {
   transform: scale(0.97);
 }
 
-/* ===== 結果區 ===== */
-#result {
-  margin-top: 32px;
-  width: 100%;
-  max-width: 420px;
-}
-
-#result h2 {
-  font-size: 1.4rem;
-  margin-bottom: 16px;
-}
-
-#ranking {
-  padding-left: 20px;
-}
-
-#ranking li {
-  margin-bottom: 8px;
+/* 平手按鈕（如果存在） */
+button.tie {
+  background-color: #fde68a;
+  color: #374151;
   font-size: 1rem;
 }
 
-button {
-  font-size: 1.1rem !important;
-  color: #1a1a1a !important;
-  white-space: normal;
+/* ===============================
+   結果畫面
+   =============================== */
+
+#result {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 24px;
+}
+
+#result h2 {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+#ranking {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1e3a8a;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+#ranking li {
+  margin: 6px 0;
+  font-size: 1rem;
 }
