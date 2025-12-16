@@ -1,99 +1,162 @@
-/* 設定整個頁面的基本樣式 */
+/* ===============================
+   色彩變數
+   =============================== */
+
+:root {
+  --blue-main: #4a6fa5;
+  --blue-soft: #6f8fc9;
+  --yellow-main: #f2c94c;
+  --yellow-soft: #f7e6a1;
+
+  --text-main: #2f3a4a;
+  --text-sub: #6b7280;
+}
+
+/* ===============================
+   整體頁面設定
+   =============================== */
+
 body {
-  font-family: sans-serif;       /* 使用無襯線字體 */
-  text-align: center;            /* 文字置中 */
-  background-color: #f5f5f5;     /* 淺灰背景 */
-  margin: 0;                     /* 移除預設邊距 */
-  padding: 40px;                 /* 四周留白 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               "Noto Sans TC", sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 40px 20px;
+  color: var(--text-main);
+
+  /* 黃藍柔和背景 */
+  background:
+    radial-gradient(circle at 20% 10%, rgba(242, 201, 76, 0.25), transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(74, 111, 165, 0.25), transparent 45%),
+    radial-gradient(circle at 50% 90%, rgba(111, 143, 201, 0.2), transparent 50%),
+    linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
 }
 
-/* 二選一區塊 */
+/* ===============================
+   標題
+   =============================== */
+
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 28px;
+  color: var(--blue-main);
+}
+
+/* ===============================
+   二選一主區塊（上下排列）
+   =============================== */
+
 #battle {
-  display: flex;                /* 使用彈性排版 */
-  justify-content: center;      /* 水平置中 */
-  align-items: center;          /* 垂直置中 */
-  gap: 20px;                    /* 元素之間距離 */
-  margin-top: 40px;             /* 與上方距離 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
 }
 
-/* 所有按鈕的樣式 */
+/* ===============================
+   題號文字
+   =============================== */
+
+#progress {
+  font-size: 14px;
+  color: var(--text-sub);
+  letter-spacing: 0.5px;
+}
+
+/* ===============================
+   選項區（左右排列）
+   =============================== */
+
+#choices {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 6px;
+}
+
+/* VS */
+.vs {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+/* ===============================
+   按鈕（主視覺）
+   =============================== */
+
 button {
-  padding: 20px 30px;           /* 按鈕內距 */
-  font-size: 18px;              /* 文字大小 */
-  cursor: pointer;              /* 滑鼠變手指 */
-  border-radius: 8px;           /* 圓角 */
-  border: none;                 /* 移除邊框 */
-  background-color: white;      /* 白色背景 */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* 陰影 */
+  min-width: 150px;
+  padding: 22px 28px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+
+  border-radius: 16px;
+  border: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #f3f6fb
+    );
+
+  color: var(--text-main);
+
+  box-shadow:
+    0 10px 22px rgba(74, 111, 165, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
-/* 滑鼠移上去的效果 */
+/* 滑鼠移上 */
 button:hover {
-  background-color: #eaeaea;    /* 背景變深 */
+  transform: translateY(-2px);
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      var(--yellow-soft)
+    );
+  box-shadow:
+    0 14px 28px rgba(74, 111, 165, 0.25);
 }
 
-/* 排名結果區 */
+/* 點擊瞬間 */
+button:active {
+  transform: translateY(0);
+  box-shadow:
+    0 6px 14px rgba(74, 111, 165, 0.2);
+}
+
+/* ===============================
+   結果區
+   =============================== */
+
 #result {
-  margin-top: 50px;             /* 與上方距離 */
-}
-// 使用者選擇後要做的事情
-function choose(winner, loser) {
-
-  // 更新 Elo 分數
-  updateElo(winner, loser);
-
-  // 題目數 +1
-  rounds++;
-
-  // 如果已經達到題目上限
-  if (rounds >= MAX_ROUNDS) {
-    showResult();   // 顯示結果
-  } else {
-    nextBattle();  // 繼續下一題
-  }
+  margin-top: 50px;
 }
 
-/* ===============================
-   顯示最終排名
-   =============================== */
-
-function showResult() {
-
-  // 隱藏二選一畫面
-  document.getElementById("battle").hidden = true;
-
-  // 顯示結果畫面
-  document.getElementById("result").hidden = false;
-
-  // 依照分數由高到低排序
-  const sorted = [...characters].sort(
-    (a, b) => b.rating - a.rating
-  );
-
-  // 取得排名清單容器
-  const list = document.getElementById("ranking");
-
-  // 清空舊內容（保險用）
-  list.innerHTML = "";
-
-  // 逐一加入排名項目
-  sorted.forEach(char => {
-
-    // 建立一個 li
-    const li = document.createElement("li");
-
-    // 顯示角色名稱與分數
-    li.textContent =
-      `${char.name}（分數：${Math.round(char.rating)}）`;
-
-    // 加入清單
-    list.appendChild(li);
-  });
+#result h2 {
+  font-size: 20px;
+  margin-bottom: 18px;
+  color: var(--blue-main);
 }
 
-/* ===============================
-   啟動第一題
-   =============================== */
+#ranking {
+  list-style: none;
+  padding: 0;
+}
 
-// 頁面載入後立即出第一題
-nextBattle();
+#ranking li {
+  padding: 10px 0;
+  font-size: 15px;
+  border-bottom: 1px solid rgba(74, 111, 165, 0.15);
+}
