@@ -129,7 +129,7 @@ const characters = [
 ];
 
 /* ===============================
-   初始化狀態
+   基本設定
    =============================== */
 
 characters.forEach(c => {
@@ -138,6 +138,7 @@ characters.forEach(c => {
 });
 
 let rounds = 0;
+let phase = 1; // 1=預賽 2=分組瑞士 3=決勝
 let currentPair = null;
 let pairingQueue = [];
 const playedPairs = new Set();
@@ -150,8 +151,15 @@ function pairKey(a, b) {
   return [a.name, b.name].sort().join("||");
 }
 
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 /* ===============================
-   Elo（無平手）
+   Elo
    =============================== */
 
 function updateElo(winner, loser) {
@@ -164,32 +172,39 @@ function updateElo(winner, loser) {
 }
 
 /* ===============================
-   瑞士制配對（核心）
+   第一階段：亂數預賽
    =============================== */
 
-function generatePairings() {
+function generateRandomPairings() {
+  const pool = [...characters];
+  shuffle(pool);
+  pairingQueue = [];
 
-  const sorted = [...characters].sort((a, b) => {
-    if (b.wins !== a.wins) return b.wins - a.wins;
-    return b.rating - a.rating;
-  });
+  for (let i = 0; i < pool.length - 1; i += 2) {
+    pairingQueue.push([pool[i], pool[i + 1]]);
+  }
+}
 
+/* ===============================
+   第二階段：分組瑞士制
+   =============================== */
+
+function generateSwissPairings(targetPool) {
+  const sorted = [...targetPool].sort((a, b) => b.rating - a.rating);
   pairingQueue = [];
   const used = new Set();
 
   for (let i = 0; i < sorted.length; i++) {
-    const a = sorted[i];
-    if (used.has(a)) continue;
+    if (used.has(sorted[i])) continue;
 
     for (let j = i + 1; j < sorted.length; j++) {
-      const b = sorted[j];
-      if (used.has(b)) continue;
+      if (used.has(sorted[j])) continue;
 
-      const key = pairKey(a, b);
+      const key = pairKey(sorted[i], sorted[j]);
       if (!playedPairs.has(key)) {
-        pairingQueue.push([a, b]);
-        used.add(a);
-        used.add(b);
+        pairingQueue.push([sorted[i], sorted[j]]);
+        used.add(sorted[i]);
+        used.add(sorted[j]);
         break;
       }
     }
@@ -197,23 +212,43 @@ function generatePairings() {
 }
 
 /* ===============================
-   下一題
+   下一場
    =============================== */
 
 function nextBattle() {
 
-  if (pairingQueue.length === 0) {
-    generatePairings();
+  // 🔁 階段切換規則
+  if (phase === 1 && rounds >= 40) {
+    phase = 2;
+    playedPairs.clear();
+    generateSwissPairings(characters);
+  }
+
+  if (phase === 2 && rounds >= 80) {
+    phase = 3;
+    playedPairs.clear();
+    const top = [...characters]
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 30);
+    generateSwissPairings(top);
   }
 
   if (pairingQueue.length === 0) {
-    showResult();
-    return;
+    if (phase === 1) generateRandomPairings();
+    else if (phase === 2) generateSwissPairings(characters);
+    else showResult();
   }
+
+  if (pairingQueue.length === 0) return;
 
   rounds++;
+
+  const phaseName =
+    phase === 1 ? "預賽" :
+    phase === 2 ? "分組賽" : "決勝";
+
   document.getElementById("progress").textContent =
-    `第 ${rounds} 次比較`;
+    `${phaseName}｜第 ${rounds} 場`;
 
   const [a, b] = pairingQueue.shift();
   currentPair = { a, b };
@@ -228,8 +263,6 @@ function nextBattle() {
    =============================== */
 
 function resolveBattle(side) {
-  if (!currentPair) return;
-
   const { a, b } = currentPair;
   const winner = side === "left" ? a : b;
   const loser  = side === "left" ? b : a;
@@ -255,8 +288,7 @@ function showResult() {
 
   sorted.forEach(c => {
     const li = document.createElement("li");
-    li.textContent =
-      `${c.name}（勝:${c.wins} 敗:${c.losses} 分:${Math.round(c.rating)}）`;
+    li.textContent = `${c.name}（勝:${c.wins} 敗:${c.losses}）`;
     list.appendChild(li);
   });
 }
@@ -273,10 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("right")
     .addEventListener("click", () => resolveBattle("right"));
 
-  generatePairings();
-  nextBattle();
-});
-
-  generatePairings();
+  generateRandomPairings();
   nextBattle();
 });
