@@ -129,8 +129,13 @@ const characters = [
 ];
 
 /* ===============================
-   全域狀態
+   初始化狀態
    =============================== */
+
+characters.forEach(c => {
+  c.wins = 0;
+  c.losses = 0;
+});
 
 let rounds = 0;
 let currentPair = null;
@@ -159,10 +164,11 @@ function updateElo(winner, loser) {
 }
 
 /* ===============================
-   瑞士制配對（穩定簡化版）
+   瑞士制配對（核心）
    =============================== */
 
 function generatePairings() {
+
   const sorted = [...characters].sort((a, b) => {
     if (b.wins !== a.wins) return b.wins - a.wins;
     return b.rating - a.rating;
@@ -172,16 +178,18 @@ function generatePairings() {
   const used = new Set();
 
   for (let i = 0; i < sorted.length; i++) {
-    if (used.has(sorted[i])) continue;
+    const a = sorted[i];
+    if (used.has(a)) continue;
 
     for (let j = i + 1; j < sorted.length; j++) {
-      if (used.has(sorted[j])) continue;
+      const b = sorted[j];
+      if (used.has(b)) continue;
 
-      const key = pairKey(sorted[i], sorted[j]);
+      const key = pairKey(a, b);
       if (!playedPairs.has(key)) {
-        pairingQueue.push([sorted[i], sorted[j]]);
-        used.add(sorted[i]);
-        used.add(sorted[j]);
+        pairingQueue.push([a, b]);
+        used.add(a);
+        used.add(b);
         break;
       }
     }
@@ -193,6 +201,7 @@ function generatePairings() {
    =============================== */
 
 function nextBattle() {
+
   if (pairingQueue.length === 0) {
     generatePairings();
   }
@@ -219,6 +228,8 @@ function nextBattle() {
    =============================== */
 
 function resolveBattle(side) {
+  if (!currentPair) return;
+
   const { a, b } = currentPair;
   const winner = side === "left" ? a : b;
   const loser  = side === "left" ? b : a;
@@ -244,13 +255,14 @@ function showResult() {
 
   sorted.forEach(c => {
     const li = document.createElement("li");
-    li.textContent = `${c.name}（勝:${c.wins} 敗:${c.losses}）`;
+    li.textContent =
+      `${c.name}（勝:${c.wins} 敗:${c.losses} 分:${Math.round(c.rating)}）`;
     list.appendChild(li);
   });
 }
 
 /* ===============================
-   🔑 啟動（等 DOM 準備好）
+   啟動
    =============================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -260,6 +272,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("right")
     .addEventListener("click", () => resolveBattle("right"));
+
+  generatePairings();
+  nextBattle();
+});
 
   generatePairings();
   nextBattle();
