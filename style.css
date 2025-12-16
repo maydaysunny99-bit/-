@@ -1,19 +1,13 @@
-/* ===============================
-   色彩變數
-   =============================== */
-
 :root {
-  --blue-main: #4a6fa5;
-  --blue-soft: #6f8fc9;
-  --yellow-main: #f2c94c;
-  --yellow-soft: #f7e6a1;
-
-  --text-main: #2f3a4a;
-  --text-sub: #6b7280;
+  --navy: #0f172a;        /* 藏青 */
+  --navy-soft: #1e293b;
+  --yellow: #f4d35e;      /* 鵝黃 */
+  --yellow-soft: #fae9a0;
+  --text-light: #e5e7eb;
 }
 
 /* ===============================
-   整體頁面設定
+   整體頁面
    =============================== */
 
 body {
@@ -21,30 +15,22 @@ body {
                "Noto Sans TC", sans-serif;
   text-align: center;
   margin: 0;
-  padding: 40px 20px;
-  color: var(--text-main);
+  padding: 32px 16px;
 
-  /* 黃藍柔和背景 */
-  background:
-    radial-gradient(circle at 20% 10%, rgba(242, 201, 76, 0.25), transparent 40%),
-    radial-gradient(circle at 80% 20%, rgba(74, 111, 165, 0.25), transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(111, 143, 201, 0.2), transparent 50%),
-    linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+  background-color: var(--navy);
+  color: var(--text-light);
 }
 
-/* ===============================
-   標題
-   =============================== */
-
+/* 標題 */
 h1 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
-  margin-bottom: 28px;
-  color: var(--blue-main);
+  margin-bottom: 20px;
+  color: var(--yellow);
 }
 
 /* ===============================
-   二選一主區塊（上下排列）
+   主對戰區
    =============================== */
 
 #battle {
@@ -52,113 +38,61 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  margin-top: 10px;
 }
 
-/* ===============================
-   題號文字
-   =============================== */
-
+/* 題號 */
 #progress {
-  font-size: 14px;
-  color: var(--text-sub);
-  letter-spacing: 0.5px;
-}
-
-/* ===============================
-   選項區（左右排列）
-   =============================== */
-
-#choices {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.85;
 }
 
 /* VS */
 .vs {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-sub);
+  font-size: 12px;
+  opacity: 0.6;
 }
 
 /* ===============================
-   按鈕（主視覺）
+   按鈕
    =============================== */
 
 button {
-  min-width: 150px;
-  padding: 22px 28px;
-  font-size: 18px;
-  font-weight: 500;
-  cursor: pointer;
+  width: 72vw;
+  max-width: 280px;
+
+  padding: 20px 12px;
+  font-size: 17px;
+  font-weight: 600;
 
   border-radius: 16px;
   border: none;
 
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff,
-      #f3f6fb
-    );
+  background: linear-gradient(
+    180deg,
+    var(--yellow),
+    var(--yellow-soft)
+  );
 
-  color: var(--text-main);
+  color: #1f2937;
 
   box-shadow:
-    0 10px 22px rgba(74, 111, 165, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 8px 20px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* 滑鼠移上 */
 button:hover {
   transform: translateY(-2px);
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff,
-      var(--yellow-soft)
-    );
   box-shadow:
-    0 14px 28px rgba(74, 111, 165, 0.25);
+    0 12px 26px rgba(0, 0, 0, 0.45);
 }
 
-/* 點擊瞬間 */
 button:active {
   transform: translateY(0);
   box-shadow:
-    0 6px 14px rgba(74, 111, 165, 0.2);
-}
-
-/* ===============================
-   結果區
-   =============================== */
-
-#result {
-  margin-top: 50px;
-}
-
-#result h2 {
-  font-size: 20px;
-  margin-bottom: 18px;
-  color: var(--blue-main);
-}
-
-#ranking {
-  list-style: none;
-  padding: 0;
-}
-
-#ranking li {
-  padding: 10px 0;
-  font-size: 15px;
-  border-bottom: 1px solid rgba(74, 111, 165, 0.15);
+    0 6px 14px rgba(0, 0, 0, 0.4);
 }
 /* ===============================
    手機專用調整（Mobile First）
